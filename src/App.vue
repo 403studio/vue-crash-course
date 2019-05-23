@@ -1,28 +1,53 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Todo App</h1>
+    <AddTodo v-on:add-todo="addTodo"/>
+    <Todos v-bind:todos="todos" v-on:delete-todo="deleteTodo"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
+import AddTodo from "./components/Todo/AddTodo.vue";
+import Todos from "./components/Todo/Todos.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
-    HelloWorld
+    AddTodo,
+    Todos
+  },
+  data() {
+    return {
+      todos: []
+    };
+  },
+  methods: {
+    addTodo(todo) {
+      this.todos.unshift(todo);
+    },
+    deleteTodo(id) {
+      this.todos = this.todos.filter(todo => todo.id !== id);
+    }
+  },
+  async created() {
+    const res = await axios.get(
+      "http://jsonplaceholder.typicode.com/todos?_limit=5"
+    );
+    this.todos = res.data;
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   color: #2c3e50;
-  margin-top: 60px;
+}
+h2 {
+  margin: 0;
+  padding: 5px 10px;
 }
 </style>
